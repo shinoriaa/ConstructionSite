@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacts Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contacts List</h1>
+    <table id="contacts-table">
+        <thead>
+            <tr>
+                <!-- Table headers will be added dynamically -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to fetch contacts and populate the table
+        function fetchContacts() {
+            fetch('/contacts')
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('contacts-table');
+                    const thead = table.querySelector('thead tr');
+                    const tbody = table.querySelector('tbody');
+
+                    // Clear existing table contents
+                    thead.innerHTML = '';
+                    tbody.innerHTML = '';
+
+                    // Add table headers
+                    if (data.length > 0) {
+                        Object.keys(data[0]).forEach(key => {
+                            const th = document.createElement('th');
+                            th.textContent = key;
+                            thead.appendChild(th);
+                        });
+
+                        // Add table rows
+                        data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            Object.values(row).forEach(value => {
+                                const td = document.createElement('td');
+                                td.textContent = value;
+                                tr.appendChild(td);
+                            });
+                            tbody.appendChild(tr);
+                        });
+                    } else {
+                        // No data message
+                        const tr = document.createElement('tr');
+                        const td = document.createElement('td');
+                        td.setAttribute('colspan', '100%');
+                        td.textContent = 'No contacts found';
+                        tr.appendChild(td);
+                        tbody.appendChild(tr);
+                    }
+                })
+                .catch(error => console.error('Error fetching contacts:', error));
+        }
+
+        // Fetch contacts on page load
+        fetchContacts();
+    </script>
+</body>
+</html>
